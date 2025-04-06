@@ -4,7 +4,7 @@ all the algorithms I solved
 # ITMO (timus, yandex_contest)
 
 Задачи, которые были решены мной в рамках курса алгоритмы и структуры данных в университете ИТМО.
-Задачи были представлены с сайта [timus](https://acm.timus.ru/problemset.aspx) и[яндекс контеста](https://contest.yandex.ru/contest/35179/problems/).
+Задачи были представлены с сайта [timus](https://acm.timus.ru/problemset.aspx) и [яндекс контеста](https://contest.yandex.ru/contest/35179/problems/).
 
 ***
 
