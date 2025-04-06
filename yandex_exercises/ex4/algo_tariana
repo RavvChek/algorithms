@@ -1,0 +1,96 @@
+#include <iostream>
+#include <vector>
+#include <map>
+#include <unordered_map>
+#include <algorithm>
+#include <set>
+
+using namespace std;
+
+vector<string> people;
+map<string, vector<string>> pedigree;
+map<string, string> dsu;
+map<string, bool> visited;
+unordered_map<string, string> ancestors;
+set<string> children;
+map<string, vector<string>> queries;
+unordered_map<pair<string, string>, string> results;
+
+string find_ancestor(const string &person) {
+    if (person == dsu[person]) {
+        return person;
+    } else {
+        return dsu[person] = find_ancestor(dsu[person]);
+    }
+}
+
+void union_trees(const string &str1, const string &str2) {
+    string a = find_ancestor(str1);
+    string b = find_ancestor(str2);
+    if (a != b) {
+        ancestors[b] = a;
+        dsu[b] = a;
+    }
+}
+
+void dfs(const string &v) {
+    visited[v] = true;
+    ancestors[v] = v;
+    dsu[v] = v;
+    for (const auto &u: pedigree[v]) {
+        if (!visited[u]) {
+            dfs(u);
+            union_trees(v, u);
+        }
+    }
+    for (int i = 0; i < queries[v].size(); ++i) {
+        if (visited[queries[v][i]]) {
+            pair<string, string> pair;
+            pair.first = v;
+            pair.second = queries[v][i];
+            if (results.find(pair) == results.end()) {
+                pair.first = queries[v][i];
+                pair.second = v;
+            }
+            results[pair] = ancestors[find_ancestor(queries[v][i])];
+        }
+    }
+}
+
+int main() {
+    int N;
+    cin >> N;
+    string child, parent;
+    for (int i = 0; i < N - 1; i++) {
+        cin >> child >> parent;
+        people.push_back(child);
+        people.push_back(parent);
+        children.insert(child);
+        pedigree[parent].push_back(child);
+    }
+    people.erase(unique(people.begin(), people.end()), people.end());
+    string root;
+    for (const string &person: people) {
+        if (children.find(person) == children.end()) {
+            root = person;
+            break;
+        }
+    }
+    string person1;
+    string person2;
+    for (int i = 0; i < 3; i++) {
+        cin >> person1 >> person2;
+        queries[person1].push_back(person2);
+        queries[person2].push_back(person1);
+        pair<string, string> pair;
+        pair.first = person1;
+        pair.second = person2;
+        results[pair] = "";
+    }
+    dfs(root);
+
+    for (pair<pair<string, string>, string> value : results) {
+        cout << value.second << endl;
+    }
+    return 0;
+}
